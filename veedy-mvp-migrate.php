@@ -154,11 +154,12 @@ if (function_exists('WC')) {
     update_option('woocommerce_enable_signup_and_login_from_checkout', 'yes');
     update_option('woocommerce_enable_myaccount_registration', 'yes');
     update_option('woocommerce_calc_taxes', 'no');
+    $bacs_instructions = "Transfer sesuai total invoice. Cantumkan nomor pesanan pada berita transfer. Pesanan diproses setelah pembayaran diverifikasi.\n\nBANK BCA DIGITAL / BLU BCA\nNama: Muhammad Vidi Fadilakbar\nNo. Rekening: 002220010720";
     update_option('woocommerce_bacs_settings', [
         'enabled' => 'yes',
         'title' => 'Transfer Bank Manual',
-        'description' => 'Transfer sesuai total invoice. Cantumkan nomor pesanan pada berita transfer. Pesanan diproses setelah pembayaran diverifikasi.',
-        'instructions' => 'Transfer sesuai total invoice. Cantumkan nomor pesanan pada berita transfer. Pesanan diproses setelah pembayaran diverifikasi.',
+        'description' => $bacs_instructions,
+        'instructions' => $bacs_instructions,
     ]);
     update_option('woocommerce_bacs_accounts', [[
         'account_name' => 'Muhammad Vidi Fadilakbar',

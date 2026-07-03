@@ -106,6 +106,7 @@ $fields = array(
     )),
     veedy_form3_field('textarea', 'catatan', 'Catatan tambahan', false),
     veedy_form3_field('terms_and_condition', 'agreement', 'Persetujuan', true, array(
+        'attributes' => array('value' => '1'),
         'settings' => array('tnc_html' => 'Saya paham bahwa request ini belum menjadi pesanan aktif. Harga, stok, dan estimasi akan dicek terlebih dahulu oleh Veedy Store.'),
     )),
 );
@@ -116,14 +117,30 @@ $form_fields = array(
         'type' => 'button',
         'element' => 'button',
         'attributes' => array('type' => 'submit', 'class' => 'ff-btn ff-btn-submit ff-btn-md'),
-        'settings' => array('align' => 'left', 'button_style' => 'default', 'container_class' => '', 'button_size' => 'md'),
+        'settings' => array('align' => 'left', 'button_style' => 'default', 'container_class' => '', 'button_size' => 'md', 'button_text' => 'Kirim Request'),
         'editor_options' => array('title' => 'Submit Button'),
         'label' => 'Kirim Request',
     ),
 );
 
-$update = array('form_fields' => wp_json_encode($form_fields));
+$appearance = array(
+    'layout' => 'default',
+    'labelPlacement' => 'top',
+    'asteriskPlacement' => 'asterisk-right',
+    'helpMessagePlacement' => 'with_label',
+    'cssClassName' => 'veedy-form',
+);
+
+$update = array(
+    'status' => 'published',
+    'appearance_settings' => wp_json_encode($appearance),
+    'form_fields' => wp_json_encode($form_fields),
+    'has_payment' => 0,
+    'type' => 'form',
+    'conditions' => wp_json_encode(array()),
+);
 $form_columns = $wpdb->get_col("DESC {$forms_table}", 0);
+$update = array_intersect_key($update, array_flip($form_columns));
 if (in_array('updated_at', $form_columns, true)) {
     $update['updated_at'] = current_time('mysql');
 }
@@ -142,23 +159,12 @@ if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $meta_table)) === $meta
         'samePageFormBehavior' => 'hide_form',
     );
 
-    $existing_settings = $wpdb->get_var($wpdb->prepare("SELECT value FROM {$meta_table} WHERE form_id = %d AND meta_key = %s LIMIT 1", $form_id, 'formSettings'));
-    $decoded_settings = json_decode((string) $existing_settings, true);
-    if (is_array($decoded_settings)) {
-        $settings = array_replace($settings, $decoded_settings);
-        $settings['messageToShow'] = $confirmation;
-    }
-
-    $meta_id = (int) $wpdb->get_var($wpdb->prepare("SELECT id FROM {$meta_table} WHERE form_id = %d AND meta_key = %s LIMIT 1", $form_id, 'formSettings'));
-    if ($meta_id) {
-        $meta_result = $wpdb->update($meta_table, array('value' => wp_json_encode($settings)), array('id' => $meta_id));
-    } else {
-        $meta_result = $wpdb->insert($meta_table, array(
-            'form_id' => $form_id,
-            'meta_key' => 'formSettings',
-            'value' => wp_json_encode($settings),
-        ));
-    }
+    $wpdb->delete($meta_table, array('form_id' => $form_id, 'meta_key' => 'formSettings'));
+    $meta_result = $wpdb->insert($meta_table, array(
+        'form_id' => $form_id,
+        'meta_key' => 'formSettings',
+        'value' => wp_json_encode($settings),
+    ));
 
     if ($meta_result === false) {
         veedy_form3_log('failed updating formSettings: ' . $wpdb->last_error);

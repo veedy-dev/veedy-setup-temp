@@ -1,0 +1,1466 @@
+/*
+Theme Name: Veedy Blocksy Child
+Theme URI: https://veedystore.mystagingwebsite.com/
+Description: Omnitype-inspired storefront skin for Veedy Store. Product-first, warm off-white, one orange accent, 1px borders, no shadows.
+Author: Veedy Store
+Template: blocksy
+Version: 2.0.0
+Text Domain: veedy-blocksy-child
+*/
+
+/* =============================================================
+   1. DESIGN TOKENS
+   ============================================================= */
+
+:root {
+	/* Palette — DESIGN.md §4.2 */
+	--vd-bg: #F5F3EF;
+	--vd-surface: #FFFFFF;
+	--vd-text: #111111;
+	--vd-muted: #6F6F6F;
+	--vd-border: #E1DED8;
+	--vd-accent: #E9502F;
+	--vd-accent-dark: #C73E24;
+	--vd-dark: #232323;
+	--vd-success: #2E7D4F;
+	--vd-warning: #B86B00;
+
+	/* Derived tints (badges, panels) */
+	--vd-success-bg: #E8F1EB;
+	--vd-warning-bg: #F6EDDD;
+	--vd-muted-bg: #ECEAE4;
+
+	/* Dark-context tokens (header, footer, CTA strip) */
+	--vd-dark-line: #3B3936;
+	--vd-dark-text: #F5F3EF;
+	--vd-dark-muted: #A3A09A;
+
+	/* Type */
+	--vd-font-heading: "Space Grotesk", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+	--vd-font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+	/* Layout */
+	--vd-container: 1240px;
+	--vd-container-wide: 1440px;
+	--vd-radius: 2px;
+	--vd-gutter: 32px;
+	--vd-section-y: 88px;
+	--vd-section-y-sm: 48px;
+
+	/* ---- Blocksy variable bridge ----
+	   Blocksy reads these custom properties internally; overriding
+	   at :root keeps parent components on-palette without fighting
+	   individual selectors. */
+	--theme-normal-container-max-width: 1240px;
+	--theme-content-vertical-spacing: 64px;
+	--theme-text-color: var(--vd-text);
+	--theme-headings-color: var(--vd-text);
+	--theme-border-color: var(--vd-border);
+	--theme-link-initial-color: var(--vd-text);
+	--theme-link-hover-color: var(--vd-accent);
+	--theme-button-background-initial-color: var(--vd-dark);
+	--theme-button-background-hover-color: var(--vd-accent);
+	--theme-button-text-initial-color: #FFFFFF;
+	--theme-button-text-hover-color: #FFFFFF;
+	--theme-button-border-radius: var(--vd-radius);
+	--theme-form-field-border-initial-color: var(--vd-border);
+	--theme-form-field-border-focus-color: var(--vd-dark);
+	--theme-form-field-background-initial-color: var(--vd-surface);
+	--theme-form-field-border-radius: var(--vd-radius);
+}
+
+/* =============================================================
+   2. BASE
+   ============================================================= */
+
+body {
+	background-color: var(--vd-bg);
+	font-family: var(--vd-font-body);
+	color: var(--vd-text);
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6,
+.entry-title,
+.page-title {
+	font-family: var(--vd-font-heading);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--vd-text);
+}
+
+h1 { letter-spacing: -0.02em; }
+
+a {
+	transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+::selection {
+	background: var(--vd-accent);
+	color: #fff;
+}
+
+:focus-visible {
+	outline: 2px solid var(--vd-accent);
+	outline-offset: 2px;
+}
+
+/* Sharp, consistent buttons everywhere (Woo, Blocksy, Gutenberg) */
+.button,
+button[type="submit"],
+input[type="submit"],
+.wp-element-button,
+.wp-block-button__link,
+.ff-btn-submit {
+	font-family: var(--vd-font-heading);
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	border-radius: var(--vd-radius);
+	border: 1px solid transparent;
+	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Micro-label utility pattern reused across components */
+.vd-kicker,
+.vd-hero__kicker,
+.vd-section__kicker {
+	font-family: var(--vd-font-body);
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--vd-muted);
+}
+
+/* =============================================================
+   3. ANNOUNCEMENT BAR  (.vd-announcement — output via wp_body_open)
+   ============================================================= */
+
+.vd-announcement {
+	background: var(--vd-accent);
+	min-height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px 20px;
+}
+
+.vd-announcement a {
+	color: #FFFFFF;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-decoration: none;
+	text-align: center;
+	letter-spacing: 0.01em;
+}
+
+.vd-announcement a:hover { color: #FFFFFF; }
+
+.vd-announcement .vd-announcement__cta {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	font-weight: 600;
+	white-space: nowrap;
+	margin-inline-start: 6px;
+}
+
+@media (max-width: 419.98px) {
+	/* One line only per DESIGN §12.2 — drop it when genuinely cramped */
+	.vd-announcement { display: none; }
+}
+
+/* =============================================================
+   4. HEADER — dark bar over Blocksy header type-1
+   ============================================================= */
+
+#header .ct-container,
+#header [data-row] {
+	background-color: var(--vd-dark);
+}
+
+#header [data-row] {
+	--height: 75px;
+	border-bottom: 1px solid var(--vd-dark-line);
+}
+
+#header {
+	--theme-link-initial-color: var(--vd-dark-text);
+	--theme-link-hover-color: #FFFFFF;
+	--theme-text-color: var(--vd-dark-text);
+	--theme-icon-color: var(--vd-dark-text);
+	--theme-icon-hover-color: var(--vd-accent);
+}
+
+#header .site-title,
+#header .site-title a {
+	font-family: var(--vd-font-heading);
+	font-weight: 700;
+	font-size: 19px;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--vd-dark-text);
+}
+
+#header .site-title a:hover { color: #FFFFFF; }
+
+#header .ct-menu-link {
+	font-family: var(--vd-font-heading);
+	font-size: 13px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	color: var(--vd-dark-text);
+}
+
+#header .ct-menu-link:hover { color: var(--vd-accent); }
+
+#header .menu > li.current-menu-item > .ct-menu-link {
+	color: #FFFFFF;
+	box-shadow: inset 0 -2px 0 0 var(--vd-accent); /* flat underline, not a shadow effect */
+}
+
+#header .ct-icon {
+	fill: var(--vd-dark-text);
+}
+
+#header .ct-toggle:hover .ct-icon {
+	fill: var(--vd-accent);
+}
+
+/* Cart count bubble (when cart element is added to header) */
+#header .ct-dynamic-count-cart,
+#header [data-count]:not([data-count="0"])::after {
+	background: var(--vd-accent);
+	color: #fff;
+}
+
+/* Mobile offcanvas panel — match the dark header */
+#offcanvas .ct-panel-inner,
+#offcanvas .ct-panel-content {
+	background-color: var(--vd-dark);
+	color: var(--vd-dark-text);
+}
+
+#offcanvas {
+	--theme-link-initial-color: var(--vd-dark-text);
+	--theme-link-hover-color: var(--vd-accent);
+	--theme-icon-color: var(--vd-dark-text);
+}
+
+#offcanvas .ct-menu-link,
+#offcanvas .menu li a {
+	font-family: var(--vd-font-heading);
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	font-size: 14px;
+	color: var(--vd-dark-text);
+	border-bottom: 1px solid var(--vd-dark-line);
+}
+
+#offcanvas .ct-toggle-close .ct-icon { fill: var(--vd-dark-text); }
+
+/* =============================================================
+   5. LAYOUT PRIMITIVES
+   ============================================================= */
+
+.vd-section {
+	padding-top: var(--vd-section-y);
+	padding-bottom: var(--vd-section-y);
+}
+
+.vd-section__kicker { margin-bottom: 10px; }
+
+.vd-section__title,
+.vd-section h2.wp-block-heading {
+	font-size: 27px;
+	margin-bottom: 8px;
+}
+
+/* =============================================================
+   6. HERO  (.vd-hero)
+   ============================================================= */
+
+.vd-hero {
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	padding: 88px 64px;
+	margin-top: 40px;
+	margin-bottom: 16px;
+}
+
+.vd-hero__kicker { margin-bottom: 18px; }
+
+.vd-hero__title,
+.vd-hero h1 {
+	font-size: clamp(34px, 4.6vw, 56px);
+	line-height: 1.04;
+	font-weight: 700;
+	max-width: 15ch;
+	margin-bottom: 22px;
+}
+
+.vd-hero__subtitle,
+.vd-hero p:not(.vd-hero__kicker) {
+	font-size: 16px;
+	line-height: 1.6;
+	color: var(--vd-muted);
+	max-width: 54ch;
+	margin-bottom: 32px;
+}
+
+.vd-hero .wp-block-buttons { gap: 12px; }
+
+.vd-hero .wp-block-button__link {
+	padding: 15px 30px;
+	font-size: 13px;
+}
+
+/* Primary = accent, secondary = outlined dark */
+.vd-hero .vd-btn-primary .wp-block-button__link,
+.wp-block-button.vd-btn-primary .wp-block-button__link {
+	background: var(--vd-accent);
+	color: #fff;
+}
+
+.vd-hero .vd-btn-primary .wp-block-button__link:hover,
+.wp-block-button.vd-btn-primary .wp-block-button__link:hover {
+	background: var(--vd-accent-dark);
+	color: #fff;
+}
+
+.wp-block-button.vd-btn-ghost .wp-block-button__link {
+	background: transparent;
+	color: var(--vd-text);
+	border: 1px solid var(--vd-text);
+}
+
+.wp-block-button.vd-btn-ghost .wp-block-button__link:hover {
+	background: var(--vd-dark);
+	color: #fff;
+	border-color: var(--vd-dark);
+}
+
+/* =============================================================
+   7. CATEGORY PILLS  (.vd-pills)
+   ============================================================= */
+
+.vd-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 16px;
+	margin-bottom: 8px;
+}
+
+.vd-pills .wp-block-button__link,
+.vd-pills a {
+	background: var(--vd-surface);
+	color: var(--vd-text);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	padding: 9px 16px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	text-decoration: none;
+}
+
+.vd-pills .wp-block-button__link:hover,
+.vd-pills a:hover {
+	background: var(--vd-dark);
+	border-color: var(--vd-dark);
+	color: #fff;
+}
+
+.vd-pills .is-active .wp-block-button__link,
+.vd-pills a.is-active {
+	background: var(--vd-dark);
+	border-color: var(--vd-dark);
+	color: #fff;
+}
+
+/* =============================================================
+   8. STATUS BADGES  (.vd-badge)
+   ============================================================= */
+
+.vd-badge {
+	display: inline-block;
+	font-family: var(--vd-font-body);
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	padding: 5px 8px;
+	border-radius: var(--vd-radius);
+	border: 1px solid var(--vd-border);
+	background: var(--vd-surface);
+	color: var(--vd-text);
+}
+
+.vd-badge--ready {
+	background: var(--vd-success-bg);
+	border-color: var(--vd-success);
+	color: var(--vd-success);
+}
+
+.vd-badge--open-po {
+	background: var(--vd-warning-bg);
+	border-color: var(--vd-warning);
+	color: var(--vd-warning);
+}
+
+.vd-badge--request {
+	background: var(--vd-dark);
+	border-color: var(--vd-dark);
+	color: var(--vd-dark-text);
+}
+
+.vd-badge--sold-out {
+	background: var(--vd-muted-bg);
+	border-color: var(--vd-muted-bg);
+	color: var(--vd-muted);
+}
+
+.vd-badge--limited {
+	background: var(--vd-accent);
+	border-color: var(--vd-accent);
+	color: #fff;
+}
+
+/* Badge pinned over the card image in product loops */
+[data-products] .product .vd-badge,
+[data-products] .product figure .vd-badge {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 2;
+}
+
+/* =============================================================
+   9. PRODUCT CARDS + GRID (WooCommerce loop, Blocksy markup)
+   ============================================================= */
+
+ul.products[data-products] {
+	--shop-columns: repeat(4, minmax(0, 1fr));
+	display: grid;
+	grid-template-columns: var(--shop-columns);
+	gap: 40px 20px;
+}
+
+[data-products] li.product {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	text-align: left;
+	background: transparent;
+	margin: 0;
+}
+
+/* Image: square, contain, on a white bordered surface */
+[data-products] li.product figure {
+	order: 0;
+	position: relative;
+	width: 100%;
+	margin: 0 0 14px;
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	overflow: hidden;
+}
+
+[data-products] li.product figure .ct-media-container {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	padding: 18px;
+}
+
+[data-products] li.product figure img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	/* Blocksy prints an inline aspect-ratio (4/3) on the img */
+	aspect-ratio: 1 / 1 !important;
+}
+
+[data-products] li.product:hover figure {
+	border-color: var(--vd-text);
+}
+
+/* Title — Omnitype: uppercase, small, semibold */
+[data-products] .woocommerce-loop-product__title {
+	order: 2;
+	font-family: var(--vd-font-heading);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.45;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	margin: 0 0 2px;
+}
+
+[data-products] .woocommerce-loop-product__title a { color: var(--vd-text); }
+[data-products] .woocommerce-loop-product__title a:hover { color: var(--vd-accent); }
+
+/* Brand / source label under the title */
+[data-products] .vd-card-brand,
+[data-products] ul.entry-meta {
+	order: 3;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--vd-muted);
+	margin: 0 0 6px;
+}
+
+[data-products] ul.entry-meta li { display: inline; }
+[data-products] ul.entry-meta a { color: var(--vd-muted); }
+[data-products] ul.entry-meta a:hover { color: var(--vd-accent); }
+
+/* Price */
+[data-products] li.product .price {
+	order: 4;
+	font-family: var(--vd-font-body);
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--vd-text);
+	margin: 0 0 4px;
+}
+
+[data-products] li.product .price del {
+	color: var(--vd-muted);
+	font-weight: 400;
+	margin-inline-end: 6px;
+}
+
+[data-products] li.product .price ins {
+	text-decoration: none;
+	color: var(--vd-accent);
+}
+
+/* ETA / status line */
+[data-products] .vd-card-eta {
+	order: 5;
+	font-size: 12px;
+	color: var(--vd-muted);
+	margin: 0;
+}
+
+/* Card action button (Request Produk / Add to cart) — quiet ghost */
+[data-products] .ct-woo-card-actions {
+	order: 6;
+	width: 100%;
+	margin-top: 10px;
+}
+
+[data-products] .ct-woo-card-actions .button {
+	background: transparent;
+	color: var(--vd-text);
+	border: 1px solid var(--vd-border);
+	font-size: 12px;
+	padding: 9px 14px;
+}
+
+[data-products] .ct-woo-card-actions .button:hover {
+	background: var(--vd-dark);
+	border-color: var(--vd-dark);
+	color: #fff;
+}
+
+/* No fake social proof in cards */
+[data-products] li.product .star-rating:empty { display: none; }
+
+/* Sold-out cards mute the image, not the text */
+[data-products] li.product.outofstock figure img { opacity: 0.45; }
+
+/* =============================================================
+   10. SHOP / COLLECTION HEADER
+   ============================================================= */
+
+.post-type-archive-product .hero-section,
+.tax-product_cat .hero-section {
+	padding-top: 48px;
+	padding-bottom: 8px;
+}
+
+.post-type-archive-product .page-title,
+.tax-product_cat .page-title {
+	font-size: clamp(28px, 3.4vw, 40px);
+	letter-spacing: -0.02em;
+}
+
+/* Category / shop description used as the collection subtitle */
+.hero-section .entry-header .taxonomy-description,
+.hero-section .entry-header .archive-description,
+.vd-collection-sub {
+	font-size: 15px;
+	color: var(--vd-muted);
+	max-width: 60ch;
+	margin-top: 8px;
+}
+
+/* Listing toolbar: count left, sort right, ruled off from the grid */
+.woo-listing-top {
+	border-bottom: 1px solid var(--vd-border);
+	padding-bottom: 14px;
+	margin-bottom: 28px;
+}
+
+.woo-listing-top .woocommerce-result-count {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--vd-muted);
+}
+
+.woocommerce-ordering select.orderby {
+	font-family: var(--vd-font-body);
+	font-size: 13px;
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	background-color: var(--vd-surface);
+	padding: 8px 32px 8px 12px;
+}
+
+/* Breadcrumbs */
+.ct-breadcrumbs {
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--vd-muted);
+}
+
+.ct-breadcrumbs a { color: var(--vd-muted); }
+.ct-breadcrumbs a:hover { color: var(--vd-accent); }
+
+/* Pagination */
+.woocommerce-pagination .page-numbers li > * {
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	background: var(--vd-surface);
+	color: var(--vd-text);
+}
+
+.woocommerce-pagination .page-numbers li > .current,
+.woocommerce-pagination .page-numbers li > *:hover {
+	background: var(--vd-dark);
+	border-color: var(--vd-dark);
+	color: #fff;
+}
+
+/* =============================================================
+   11. SINGLE PRODUCT — gallery left, sticky buy panel right
+   ============================================================= */
+
+.product-entry-wrapper {
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	gap: 48px;
+	align-items: start;
+}
+
+/* Gallery */
+.woocommerce-product-gallery .ct-media-container,
+.woocommerce-product-gallery .flexy-view {
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+}
+
+.woocommerce-product-gallery .flexy-pills li,
+.woocommerce-product-gallery .flexy-pills .ct-media-container {
+	border-radius: var(--vd-radius);
+}
+
+/* Buy panel */
+.single-product div.product .entry-summary {
+	position: sticky;
+	top: 32px;
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	padding: 32px;
+}
+
+.single-product .entry-summary .product_title {
+	font-size: 26px;
+	line-height: 1.15;
+	margin-bottom: 12px;
+}
+
+.single-product .entry-summary .price {
+	font-family: var(--vd-font-body);
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--vd-text);
+}
+
+.single-product .entry-summary .woocommerce-product-details__short-description {
+	font-size: 14px;
+	line-height: 1.6;
+	color: var(--vd-muted);
+}
+
+.single-product .entry-summary .ct-product-divider {
+	border-top: 1px solid var(--vd-border);
+}
+
+/* Variations */
+.single-product .variations th.label {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--vd-muted);
+	padding-bottom: 6px;
+}
+
+.single-product .variations select {
+	width: 100%;
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	background-color: var(--vd-surface);
+	font-size: 14px;
+	padding: 10px 32px 10px 12px;
+}
+
+.single-product .reset_variations { font-size: 12px; color: var(--vd-muted); }
+
+/* Quantity + add to cart */
+.single-product .quantity .qty {
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	background: var(--vd-surface);
+	font-size: 14px;
+	font-weight: 600;
+	min-height: 48px;
+}
+
+.single-product .single_add_to_cart_button {
+	background: var(--vd-accent);
+	color: #fff;
+	min-height: 48px;
+	padding-inline: 32px;
+}
+
+.single-product .single_add_to_cart_button:hover {
+	background: var(--vd-accent-dark);
+	color: #fff;
+}
+
+/* Stock notes */
+.single-product .stock.in-stock { color: var(--vd-success); font-size: 13px; font-weight: 500; }
+.single-product .stock.out-of-stock { color: var(--vd-muted); font-size: 13px; font-weight: 500; }
+
+/* Product meta (categories row) */
+.single-product .product_meta {
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--vd-muted);
+}
+
+.single-product .product_meta a { color: var(--vd-muted); text-decoration: underline; text-underline-offset: 3px; }
+.single-product .product_meta a:hover { color: var(--vd-accent); }
+
+/* Woo tabs below (Blocksy type-1) */
+.woocommerce-tabs .tabs a {
+	font-family: var(--vd-font-heading);
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.woocommerce-tabs .tabs .active a,
+.woocommerce-tabs .tabs li.active a {
+	color: var(--vd-text);
+	box-shadow: inset 0 -2px 0 0 var(--vd-accent);
+}
+
+/* =============================================================
+   12. BUY META  (.vd-buy-meta — order type / ETA / source rows)
+   ============================================================= */
+
+.vd-buy-meta {
+	border-top: 1px solid var(--vd-border);
+	margin-top: 20px;
+}
+
+.vd-buy-meta__row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 10px 0;
+	border-bottom: 1px solid var(--vd-border);
+}
+
+.vd-buy-meta__label {
+	flex: 0 0 auto;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--vd-muted);
+}
+
+.vd-buy-meta__value {
+	font-size: 13px;
+	line-height: 1.5;
+	color: var(--vd-text);
+	text-align: right;
+}
+
+.vd-buy-meta__value a { color: var(--vd-text); text-decoration: underline; text-underline-offset: 3px; }
+.vd-buy-meta__value a:hover { color: var(--vd-accent); }
+
+/* =============================================================
+   13. ACCORDIONS  (.vd-accordions — native details/summary)
+   ============================================================= */
+
+.vd-accordions {
+	border-top: 1px solid var(--vd-border);
+	margin: 24px 0;
+}
+
+details.vd-accordion {
+	border-bottom: 1px solid var(--vd-border);
+}
+
+.vd-accordion summary.vd-accordion__title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	cursor: pointer;
+	list-style: none;
+	padding: 16px 0;
+	font-family: var(--vd-font-heading);
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--vd-text);
+}
+
+.vd-accordion summary.vd-accordion__title::-webkit-details-marker { display: none; }
+.vd-accordion summary.vd-accordion__title::marker { content: ""; }
+
+.vd-accordion summary.vd-accordion__title::after {
+	content: "+";
+	font-family: var(--vd-font-body);
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1;
+	color: var(--vd-muted);
+	flex: 0 0 auto;
+}
+
+details.vd-accordion[open] summary.vd-accordion__title::after {
+	content: "\2212"; /* minus sign */
+	color: var(--vd-accent);
+}
+
+.vd-accordion summary.vd-accordion__title:hover { color: var(--vd-accent); }
+
+.vd-accordion .vd-accordion__body {
+	padding: 0 0 18px;
+	font-size: 14px;
+	line-height: 1.65;
+	color: var(--vd-muted);
+	max-width: 68ch;
+}
+
+.vd-accordion .vd-accordion__body p { margin-bottom: 10px; }
+.vd-accordion .vd-accordion__body strong { color: var(--vd-text); }
+
+/* =============================================================
+   14. REQUEST BUTTON  (.vd-request-btn)
+   ============================================================= */
+
+a.vd-request-btn,
+.vd-request-btn .wp-block-button__link,
+.wp-block-button.vd-request-btn .wp-block-button__link {
+	display: inline-block;
+	background: var(--vd-accent);
+	color: #fff;
+	border: 1px solid var(--vd-accent);
+	border-radius: var(--vd-radius);
+	font-family: var(--vd-font-heading);
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	padding: 14px 28px;
+	text-decoration: none;
+}
+
+a.vd-request-btn:hover,
+.vd-request-btn .wp-block-button__link:hover,
+.wp-block-button.vd-request-btn .wp-block-button__link:hover {
+	background: var(--vd-accent-dark);
+	border-color: var(--vd-accent-dark);
+	color: #fff;
+}
+
+/* =============================================================
+   15. TRACK ORDER  (.vd-track / .vd-track__result / .vd-timeline)
+   ============================================================= */
+
+.vd-track {
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	padding: 32px;
+	max-width: 560px;
+}
+
+.vd-track label {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--vd-muted);
+	margin-bottom: 6px;
+}
+
+.vd-track input[type="text"],
+.vd-track input[type="email"],
+.vd-track input[type="tel"] {
+	width: 100%;
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	background: var(--vd-surface);
+	font-size: 14px;
+	padding: 11px 12px;
+	margin-bottom: 16px;
+}
+
+.vd-track input:focus {
+	border-color: var(--vd-dark);
+	outline: none;
+}
+
+.vd-track button[type="submit"],
+.vd-track input[type="submit"] {
+	background: var(--vd-dark);
+	color: #fff;
+	padding: 13px 28px;
+}
+
+.vd-track button[type="submit"]:hover,
+.vd-track input[type="submit"]:hover {
+	background: var(--vd-accent);
+	color: #fff;
+}
+
+.vd-track__result {
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	padding: 32px;
+	margin-top: 24px;
+	max-width: 560px;
+}
+
+/* Timeline */
+.vd-timeline {
+	list-style: none;
+	margin: 8px 0 0;
+	padding: 0;
+}
+
+.vd-timeline__step {
+	position: relative;
+	padding: 0 0 24px 28px;
+	font-size: 14px;
+	color: var(--vd-muted);
+}
+
+.vd-timeline__step:last-child { padding-bottom: 0; }
+
+/* connector line */
+.vd-timeline__step::before {
+	content: "";
+	position: absolute;
+	left: 6px;
+	top: 16px;
+	bottom: -2px;
+	width: 1px;
+	background: var(--vd-border);
+}
+
+.vd-timeline__step:last-child::before { display: none; }
+
+/* node */
+.vd-timeline__step::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 4px;
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+}
+
+.vd-timeline__step.is-done { color: var(--vd-text); }
+
+.vd-timeline__step.is-done::after {
+	background: var(--vd-dark);
+	border-color: var(--vd-dark);
+}
+
+.vd-timeline__step.is-done::before { background: var(--vd-dark); }
+
+.vd-timeline__step.is-current {
+	color: var(--vd-text);
+	font-weight: 600;
+}
+
+.vd-timeline__step.is-current::after {
+	background: var(--vd-accent);
+	border-color: var(--vd-accent);
+}
+
+/* =============================================================
+   16. CTA STRIP  (.vd-cta-strip — dark full-width)
+   ============================================================= */
+
+.vd-cta-strip {
+	background: var(--vd-dark);
+	color: var(--vd-dark-text);
+	padding-top: 72px;
+	padding-bottom: 72px;
+	margin-top: var(--vd-section-y);
+}
+
+.vd-cta-strip h2,
+.vd-cta-strip .wp-block-heading {
+	color: var(--vd-dark-text);
+	font-size: clamp(24px, 3vw, 34px);
+	letter-spacing: -0.015em;
+	margin-bottom: 12px;
+	max-width: 24ch;
+}
+
+.vd-cta-strip p {
+	color: var(--vd-dark-muted);
+	font-size: 15px;
+	line-height: 1.6;
+	max-width: 56ch;
+	margin-bottom: 28px;
+}
+
+.vd-cta-strip a { color: inherit; }
+
+/* =============================================================
+   17. PROCESS STRIP  (.vd-steps — 4 steps, one line each)
+   ============================================================= */
+
+.vd-steps {
+	padding-top: 56px;
+	padding-bottom: 72px;
+}
+
+.vd-steps .wp-block-columns {
+	gap: 20px;
+}
+
+.vd-steps .wp-block-column {
+	border-top: 1px solid var(--vd-text);
+	padding-top: 14px;
+}
+
+.vd-steps__num {
+	font-family: var(--vd-font-heading);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	color: var(--vd-accent);
+	margin-bottom: 6px;
+}
+
+.vd-steps__label {
+	font-family: var(--vd-font-heading);
+	font-size: 15px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--vd-text);
+	margin-bottom: 0;
+}
+
+/* =============================================================
+   18. CART / CHECKOUT — keep Woo structure, apply the system
+   ============================================================= */
+
+.woocommerce table.shop_table {
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	border-collapse: separate;
+}
+
+.woocommerce table.shop_table th {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--vd-muted);
+}
+
+.woocommerce table.shop_table td,
+.woocommerce table.shop_table th {
+	border-color: var(--vd-border);
+}
+
+.ct-woocommerce-cart-form .cart_totals,
+.ct-order-review {
+	--cart-totals-border: 1px solid var(--vd-border);
+	--order-review-border: 1px solid var(--vd-border);
+	background: var(--vd-surface);
+	border-radius: var(--vd-radius);
+}
+
+.woocommerce .cart_totals h2,
+.woocommerce #order_review_heading {
+	font-size: 18px;
+}
+
+.woocommerce form .form-row input.input-text,
+.woocommerce form .form-row textarea,
+.woocommerce form .form-row select {
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	background: var(--vd-surface);
+	font-size: 14px;
+}
+
+.woocommerce form .form-row label {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--vd-text);
+}
+
+.woocommerce-checkout #payment,
+#add_payment_method #payment {
+	background: var(--vd-bg);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+}
+
+.woocommerce-checkout #payment div.payment_box,
+#add_payment_method #payment div.payment_box {
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	color: var(--vd-muted);
+}
+
+.woocommerce #place_order,
+.wc-block-components-checkout-place-order-button {
+	background: var(--vd-accent);
+	color: #fff;
+	min-height: 50px;
+}
+
+.woocommerce #place_order:hover { background: var(--vd-accent-dark); }
+
+/* Coupon + quiet secondary buttons in cart */
+.woocommerce-cart .coupon .button,
+.woocommerce-cart button[name="update_cart"] {
+	background: transparent;
+	color: var(--vd-text);
+	border: 1px solid var(--vd-border);
+}
+
+.woocommerce-cart .coupon .button:hover,
+.woocommerce-cart button[name="update_cart"]:hover {
+	background: var(--vd-dark);
+	border-color: var(--vd-dark);
+	color: #fff;
+}
+
+/* Notices — flat, bordered, no candy colors */
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error {
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	border-left: 3px solid var(--vd-dark);
+	border-radius: var(--vd-radius);
+	color: var(--vd-text);
+}
+
+.woocommerce-message { border-left-color: var(--vd-success); }
+.woocommerce-error { border-left-color: var(--vd-accent); }
+.woocommerce-info { border-left-color: var(--vd-warning); }
+
+/* =============================================================
+   19. FLUENT FORMS
+   ============================================================= */
+
+.fluentform .ff-el-input--label label {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--vd-text);
+}
+
+.fluentform .ff-el-form-control {
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	background-color: var(--vd-surface);
+	font-family: var(--vd-font-body);
+	font-size: 14px;
+	color: var(--vd-text);
+	box-shadow: none;
+}
+
+.fluentform .ff-el-form-control:focus {
+	border-color: var(--vd-dark);
+	box-shadow: none;
+	outline: none;
+}
+
+.fluentform .ff-el-group { margin-bottom: 22px; }
+
+.fluentform .ff-el-form-check-label,
+.fluentform .ff_t_c {
+	font-size: 13px;
+	line-height: 1.55;
+	color: var(--vd-muted);
+}
+
+.fluentform .ff-el-help-message,
+.fluentform .ff-el-input--content .help-message {
+	font-size: 12px;
+	color: var(--vd-muted);
+}
+
+.fluentform .ff-btn-submit {
+	background-color: var(--vd-accent);
+	color: #fff;
+	border: none;
+	padding: 14px 32px;
+}
+
+.fluentform .ff-btn-submit:hover {
+	background-color: var(--vd-accent-dark);
+	color: #fff;
+}
+
+.fluentform .ff-message-success {
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-success);
+	border-radius: var(--vd-radius);
+	box-shadow: none;
+	color: var(--vd-text);
+}
+
+/* =============================================================
+   20. FOOTER  (.vd-site-footer — child theme footer.php)
+   ============================================================= */
+
+.vd-site-footer {
+	background: var(--vd-dark);
+	color: var(--vd-dark-text);
+	margin-top: var(--vd-section-y);
+}
+
+/* When the CTA strip is the last section, they stack seamlessly */
+.vd-cta-strip + .vd-site-footer,
+.vd-cta-strip ~ .vd-site-footer { border-top: 1px solid var(--vd-dark-line); }
+
+.vd-site-footer__inner {
+	max-width: var(--vd-container);
+	margin: 0 auto;
+	padding: 64px 32px 0;
+}
+
+.vd-site-footer__cols {
+	display: grid;
+	grid-template-columns: 1.4fr 1fr 1fr 1fr;
+	gap: 40px;
+	padding-bottom: 56px;
+}
+
+.vd-site-footer__brand {
+	font-family: var(--vd-font-heading);
+	font-size: 15px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--vd-dark-text);
+	margin-bottom: 14px;
+}
+
+.vd-site-footer__desc {
+	font-size: 13px;
+	line-height: 1.65;
+	color: var(--vd-dark-muted);
+	max-width: 34ch;
+	margin-bottom: 12px;
+}
+
+.vd-site-footer__disclaimer {
+	font-size: 12px;
+	line-height: 1.6;
+	color: var(--vd-dark-muted);
+	max-width: 34ch;
+}
+
+.vd-site-footer__heading {
+	font-family: var(--vd-font-body);
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--vd-dark-muted);
+	margin-bottom: 16px;
+}
+
+.vd-site-footer__menu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.vd-site-footer__menu li { margin-bottom: 10px; }
+
+.vd-site-footer__menu a {
+	font-size: 14px;
+	color: var(--vd-dark-text);
+	text-decoration: none;
+}
+
+.vd-site-footer__menu a:hover { color: var(--vd-accent); }
+
+.vd-site-footer__bottom {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px 24px;
+	border-top: 1px solid var(--vd-dark-line);
+	padding: 20px 0 24px;
+	font-size: 12px;
+	color: var(--vd-dark-muted);
+}
+
+.vd-site-footer__bottom a {
+	color: var(--vd-dark-text);
+	text-decoration: none;
+}
+
+.vd-site-footer__bottom a:hover { color: var(--vd-accent); }
+
+/* =============================================================
+   21. RESPONSIVE
+   ============================================================= */
+
+@media (max-width: 1023.98px) {
+	:root {
+		--vd-section-y: 64px;
+	}
+
+	ul.products[data-products] {
+		--shop-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	/* Product page stacks: gallery, then buy panel (not sticky) */
+	.product-entry-wrapper {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 28px;
+	}
+
+	.single-product div.product .entry-summary {
+		position: static;
+		padding: 24px;
+	}
+
+	.vd-hero {
+		padding: 64px 40px;
+		margin-top: 24px;
+	}
+
+	.vd-site-footer__cols {
+		grid-template-columns: 1fr 1fr;
+		gap: 36px 24px;
+	}
+}
+
+@media (max-width: 689.98px) {
+	:root {
+		--vd-section-y: var(--vd-section-y-sm);
+	}
+
+	ul.products[data-products] {
+		--shop-columns: repeat(2, minmax(0, 1fr));
+		gap: 28px 14px;
+	}
+
+	[data-products] li.product figure .ct-media-container { padding: 10px; }
+
+	.vd-hero {
+		padding: 44px 22px;
+		margin-top: 16px;
+	}
+
+	.vd-hero__title,
+	.vd-hero h1 { font-size: clamp(30px, 9vw, 38px); }
+
+	.vd-cta-strip {
+		padding-top: 52px;
+		padding-bottom: 52px;
+	}
+
+	.vd-steps .wp-block-columns {
+		flex-wrap: wrap !important;
+		gap: 24px 20px;
+	}
+
+	.vd-steps .wp-block-column {
+		flex-basis: calc(50% - 10px) !important;
+	}
+
+	.single-product div.product .entry-summary { padding: 20px; }
+
+	.vd-track,
+	.vd-track__result { padding: 22px; }
+
+	.vd-buy-meta__row {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2px;
+	}
+
+	.vd-buy-meta__value { text-align: left; }
+
+	.vd-site-footer__inner { padding: 48px 20px 0; }
+
+	.vd-site-footer__cols {
+		grid-template-columns: 1fr;
+		gap: 32px;
+		padding-bottom: 40px;
+	}
+
+	.vd-site-footer__bottom {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+	}
+}

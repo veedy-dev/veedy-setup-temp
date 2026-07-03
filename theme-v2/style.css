@@ -1464,3 +1464,600 @@ a.vd-request-btn:hover,
 		gap: 6px;
 	}
 }
+
+/* =============================================================
+   22. LOGO  (.vd-logo / Blocksy site-branding with custom logo)
+   The SVG mark uses near-white gradients — visible on the dark
+   header. If Blocksy's customizer logo (theme_mod site_logo) is
+   set, it renders inside .site-branding .custom-logo. We style
+   both paths. Orchestrator sets the theme_mod via WP-CLI.
+   ============================================================= */
+
+#header .site-branding .custom-logo,
+#header .site-branding img.custom-logo {
+	max-height: 40px;
+	width: auto;
+	height: auto;
+	display: block;
+}
+
+/* When the logo is a link wrapping an img, keep it inline-clean */
+#header .site-branding a:focus-visible {
+	outline-offset: 4px;
+}
+
+/* Mobile: center the logo. Blocksy mobile header places logo in the
+   start column; we pull it to center via flex on the row. */
+@media (max-width: 999.98px) {
+	#header [data-device="mobile"] [data-row="middle"] [data-column="start"] {
+		flex: 1;
+	}
+	#header [data-device="mobile"] [data-row="middle"] [data-column="start"] .site-branding {
+		margin-inline: auto;
+	}
+	#header [data-device="mobile"] .site-branding .custom-logo,
+	#header [data-device="mobile"] .site-branding img.custom-logo {
+		max-height: 34px;
+	}
+}
+
+/* Fallback: if no custom logo is set, the text site-title shows.
+   Already styled in §4 — keep it. */
+
+/* =============================================================
+   23. HELP BAR  (.vd-help-bar — Omnitype-style floating widget)
+   Markup injected by assets/help-bar.js. Fixed bottom-right.
+   ============================================================= */
+
+.vd-help-bar {
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	z-index: 9998;
+}
+
+.vd-help-bar__btn {
+	display: grid;
+	place-items: center;
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	border: none;
+	background: var(--vd-accent);
+	color: #fff;
+	cursor: pointer;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+	transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.vd-help-bar__btn:hover {
+	background: var(--vd-accent-dark);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.24);
+}
+
+.vd-help-bar__btn:focus-visible {
+	outline: 2px solid var(--vd-text);
+	outline-offset: 3px;
+}
+
+/* Swap icon: "?" when closed, "×" when open */
+.vd-help-bar__icon--open { display: none; }
+.vd-help-bar.is-open .vd-help-bar__icon--closed { display: none; }
+.vd-help-bar.is-open .vd-help-bar__icon--open { display: block; }
+
+.vd-help-panel {
+	position: absolute;
+	right: 0;
+	bottom: 62px;
+	width: 280px;
+	background: var(--vd-surface);
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	box-shadow: 0 10px 36px rgba(0, 0, 0, 0.14);
+	padding: 20px;
+	opacity: 0;
+	transform: translateY(8px);
+	pointer-events: none;
+	transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.vd-help-bar.is-open .vd-help-panel {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+/* When JS sets hidden=true, force-hide as a baseline */
+.vd-help-panel[hidden] {
+	display: none;
+}
+
+.vd-help-panel__head {
+	margin-bottom: 14px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--vd-border);
+}
+
+.vd-help-panel__title {
+	font-family: var(--vd-font-heading);
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--vd-text);
+	margin: 0 0 2px;
+}
+
+.vd-help-panel__sub {
+	font-size: 12px;
+	color: var(--vd-muted);
+	margin: 0;
+}
+
+.vd-help-panel__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.vd-help-panel__item { margin-bottom: 2px; }
+
+.vd-help-panel__link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 8px;
+	border-radius: var(--vd-radius);
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--vd-text);
+	text-decoration: none;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.vd-help-panel__link:hover {
+	background: var(--vd-bg);
+	color: var(--vd-accent);
+}
+
+.vd-help-panel__icon {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	color: var(--vd-muted);
+}
+
+.vd-help-panel__link:hover .vd-help-panel__icon {
+	color: var(--vd-accent);
+}
+
+.vd-help-panel__label {
+	flex: 1 1 auto;
+}
+
+/* Hide on very small screens to avoid overlapping mobile cart/checkout bars */
+@media (max-width: 419.98px) {
+	.vd-help-bar {
+		right: 14px;
+		bottom: 14px;
+	}
+	.vd-help-bar__btn {
+		width: 46px;
+		height: 46px;
+	}
+	.vd-help-panel {
+		width: calc(100vw - 28px);
+		right: -6px;
+	}
+}
+
+/* =============================================================
+   24. WOOCOMMERCE MY-ACCOUNT  (order history, nav, forms)
+   Blocksy renders /my-account/ with .woocommerce-MyAccount-nav
+   (left tabs) + .woocommerce-MyAccount-content (right).
+   ============================================================= */
+
+.woocommerce-account .woocommerce-MyAccount-navigation {
+	float: none;
+	width: 100%;
+	margin-bottom: 28px;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0;
+	border-bottom: 1px solid var(--vd-border);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li {
+	margin: 0;
+	border: none;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li a {
+	display: block;
+	padding: 12px 18px;
+	font-family: var(--vd-font-heading);
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	color: var(--vd-muted);
+	text-decoration: none;
+	border-bottom: 2px solid transparent;
+	transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li a:hover {
+	color: var(--vd-text);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a {
+	color: var(--vd-text);
+	border-bottom-color: var(--vd-accent);
+}
+
+.woocommerce-account .woocommerce-MyAccount-content {
+	float: none;
+	width: 100%;
+}
+
+.woocommerce-account .woocommerce-MyAccount-content > p:first-of-type {
+	font-size: 14px;
+	color: var(--vd-muted);
+	margin-bottom: 20px;
+}
+
+/* Order history table — clean, bordered, Shopify-like */
+.woocommerce-account .woocommerce-orders-table,
+.woocommerce-account table.my_account_orders {
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+	width: 100%;
+}
+
+.woocommerce-account .woocommerce-orders-table th,
+.woocommerce-account table.my_account_orders th {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--vd-muted);
+	background: var(--vd-bg);
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--vd-border);
+	text-align: left;
+}
+
+.woocommerce-account .woocommerce-orders-table td,
+.woocommerce-account table.my_account_orders td {
+	padding: 14px 16px;
+	border-bottom: 1px solid var(--vd-border);
+	font-size: 14px;
+	color: var(--vd-text);
+	vertical-align: middle;
+}
+
+.woocommerce-account .woocommerce-orders-table tr:last-child td,
+.woocommerce-account table.my_account_orders tr:last-child td {
+	border-bottom: none;
+}
+
+.woocommerce-account .woocommerce-orders-table tr:hover td,
+.woocommerce-account table.my_account_orders tr:hover td {
+	background: var(--vd-bg);
+}
+
+/* Order status pill */
+.woocommerce-account .woocommerce-orders-table .order-status,
+.woocommerce-account table.my_account_orders .order-status {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	padding: 4px 8px;
+	border-radius: var(--vd-radius);
+	background: var(--vd-muted-bg);
+	color: var(--vd-muted);
+}
+
+.woocommerce-account .woocommerce-orders-table .order-status.status-on-hold {
+	background: var(--vd-warning-bg);
+	color: var(--vd-warning);
+}
+
+.woocommerce-account .woocommerce-orders-table .order-status.status-completed {
+	background: var(--vd-success-bg);
+	color: var(--vd-success);
+}
+
+.woocommerce-account .woocommerce-orders-table .order-status.status-processing {
+	background: var(--vd-warning-bg);
+	color: var(--vd-warning);
+}
+
+.woocommerce-account .woocommerce-orders-table .button,
+.woocommerce-account table.my_account_orders .button {
+	font-size: 11px;
+	padding: 6px 12px;
+	background: transparent;
+	color: var(--vd-text);
+	border: 1px solid var(--vd-border);
+}
+
+.woocommerce-account .woocommerce-orders-table .button:hover,
+.woocommerce-account table.my_account_orders .button:hover {
+	background: var(--vd-dark);
+	border-color: var(--vd-dark);
+	color: #fff;
+}
+
+/* Account details / edit form */
+.woocommerce-account .woocommerce-EditAccountForm label,
+.woocommerce-account .woocommerce-EditAccountForm legend {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--vd-text);
+	margin-bottom: 6px;
+	display: block;
+}
+
+.woocommerce-account .woocommerce-EditAccountForm input.input-text,
+.woocommerce-account .woocommerce-EditAccountForm input[type="email"],
+.woocommerce-account .woocommerce-EditAccountForm input[type="password"],
+.woocommerce-account .woocommerce-EditAccountForm input[type="tel"] {
+	width: 100%;
+	border: 1px solid var(--vd-border);
+	border-radius: var(--vd-radius);
+	background: var(--vd-surface);
+	font-size: 14px;
+	padding: 10px 12px;
+	margin-bottom: 16px;
+}
+
+.woocommerce-account .woocommerce-EditAccountForm input:focus {
+	border-color: var(--vd-dark);
+	outline: none;
+}
+
+.woocommerce-account .woocommerce-EditAccountForm .button {
+	background: var(--vd-dark);
+	color: #fff;
+	border: none;
+	padding: 12px 24px;
+}
+
+.woocommerce-account .woocommerce-EditAccountForm .button:hover {
+	background: var(--vd-accent);
+	color: #fff;
+}
+
+/* Account page title */
+.woocommerce-account .entry-title,
+.woocommerce-account .page-title {
+	font-size: clamp(24px, 3vw, 34px);
+}
+
+/* My account layout: side-by-side on desktop, stacked on mobile */
+@media (min-width: 1024px) {
+	.woocommerce-account .woocommerce-MyAccount-navigation {
+		width: 240px;
+		float: left;
+		margin-bottom: 0;
+	}
+
+	.woocommerce-account .woocommerce-MyAccount-navigation ul {
+		flex-direction: column;
+		border-bottom: none;
+		border-right: 1px solid var(--vd-border);
+	}
+
+	.woocommerce-account .woocommerce-MyAccount-navigation li a {
+		border-bottom: none;
+		border-right: 2px solid transparent;
+	}
+
+	.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a {
+		border-bottom-color: transparent;
+		border-right-color: var(--vd-accent);
+	}
+
+	.woocommerce-account .woocommerce-MyAccount-content {
+		width: calc(100% - 240px - 32px);
+		float: right;
+	}
+}
+
+/* =============================================================
+   25. RESPONSIVE POLISH — refinements to existing breakpoints
+   ============================================================= */
+
+/* --- Category pills: horizontal scroll on mobile (Omnitype pattern) --- */
+@media (max-width: 689.98px) {
+	.vd-pills {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		margin-inline: -20px;
+		padding-inline: 20px;
+		padding-bottom: 8px;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+	.vd-pills::-webkit-scrollbar { display: none; }
+	.vd-pills .wp-block-button {
+		flex: 0 0 auto;
+	}
+}
+
+/* --- Product card title: 2-line clamp for even card heights --- */
+[data-products] .woocommerce-loop-product__title {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	min-height: 2.9em;
+}
+
+/* --- Card action button: full-width ghost on mobile, auto on desktop --- */
+@media (max-width: 689.98px) {
+	[data-products] .ct-woo-card-actions .button,
+	[data-products] .ct-woo-card-actions .vd-request-btn {
+		width: 100%;
+		text-align: center;
+	}
+}
+
+/* --- Shop listing toolbar: stack count + sort on narrow screens --- */
+@media (max-width: 689.98px) {
+	.woo-listing-top {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 16px;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.woo-listing-top .woocommerce-ordering {
+		margin-inline-start: auto;
+	}
+}
+
+/* --- Cart / checkout tables: scroll on mobile --- */
+@media (max-width: 689.98px) {
+	.woocommerce-cart-form .shop_table,
+	.woocommerce-checkout-review-order-table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	/* Cart item: keep image + name readable on mobile */
+	.woocommerce-cart-form .cart_item .product-thumbnail {
+		min-width: 64px;
+	}
+	.woocommerce-cart-form .cart_item .product-thumbnail img {
+		width: 64px;
+		height: 64px;
+	}
+
+	/* Cart totals stack full width */
+	.woocommerce-cart .cart_totals,
+	.woocommerce-checkout #order_review_heading,
+	.woocommerce-checkout #order_review {
+		float: none;
+		width: 100%;
+	}
+}
+
+/* --- Checkout: two-column billing/shipping → one column on mobile --- */
+.woocommerce-checkout .checkout .col2-set .col-1,
+.woocommerce-checkout .checkout .col2-set .col-2 {
+	float: none;
+	width: 100%;
+	margin-bottom: 28px;
+}
+
+.woocommerce-checkout .checkout .col2-set .col-2 {
+	margin-bottom: 0;
+}
+
+@media (min-width: 1024px) {
+	.woocommerce-checkout .checkout .col2-set .col-1,
+	.woocommerce-checkout .checkout .col2-set .col-2 {
+		float: left;
+		width: 48%;
+	}
+	.woocommerce-checkout .checkout .col2-set .col-2 {
+		margin-inline-start: 4%;
+	}
+}
+
+/* --- Request form: Fluent Forms 2-col → 1-col on mobile --- */
+@media (max-width: 689.98px) {
+	.fluentform .ff-el-group.ff-col-12,
+	.fluentform .ff-el-group.ff-col-6,
+	.fluentform .ff-el-group.ff-col-4 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+	.fluentform .ff_telemetry_field,
+	.fluentform .ff-el-form-check {
+		flex-wrap: wrap;
+	}
+}
+
+/* --- Hero: tighter on small tablet --- */
+@media (max-width: 689.98px) {
+	.vd-hero {
+		padding: 40px 22px;
+		margin-top: 12px;
+	}
+	.vd-hero .wp-block-buttons {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+	}
+	.vd-hero .wp-block-button {
+		width: 100%;
+	}
+	.vd-hero .wp-block-button__link {
+		display: block;
+		width: 100%;
+		text-align: center;
+	}
+}
+
+/* --- CTA strip + steps: tighter mobile padding --- */
+@media (max-width: 689.98px) {
+	.vd-cta-strip {
+		padding: 48px 22px;
+	}
+	.vd-cta-strip .wp-block-buttons .wp-block-button {
+		width: 100%;
+	}
+	.vd-cta-strip .wp-block-button__link {
+		display: block;
+		width: 100%;
+		text-align: center;
+	}
+	.vd-steps {
+		padding-top: 40px;
+		padding-bottom: 48px;
+	}
+}
+
+/* --- Single product: gallery thumb strip scroll on mobile --- */
+@media (max-width: 689.98px) {
+	.woocommerce-product-gallery .flexy-pills {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		scrollbar-width: none;
+		-webkit-overflow-scrolling: touch;
+	}
+	.woocommerce-product-gallery .flexy-pills::-webkit-scrollbar { display: none; }
+	.woocommerce-product-gallery .flexy-pills li {
+		flex: 0 0 auto;
+	}
+}
+
+/* --- Account orders table: scroll on mobile --- */
+@media (max-width: 689.98px) {
+	.woocommerce-account .woocommerce-orders-table,
+	.woocommerce-account table.my_account_orders {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+		-webkit-overflow-scrolling: touch;
+	}
+}
+
+/* --- Help bar: nudge up when mobile cart bar might overlap --- */
+@media (max-width: 689.98px) {
+	.vd-help-bar { bottom: 16px; }
+}

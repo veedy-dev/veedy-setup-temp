@@ -31,6 +31,15 @@ add_action( 'wp_enqueue_scripts', function () {
 		array( 'veedy-fonts' ),
 		VEEDY_CHILD_VERSION
 	);
+
+	// Help-bar widget (Omnitype-style floating support).
+	wp_enqueue_script(
+		'veedy-help-bar',
+		get_stylesheet_directory_uri() . '/assets/help-bar.js',
+		array(),
+		VEEDY_CHILD_VERSION,
+		true
+	);
 }, 50 );
 
 /**

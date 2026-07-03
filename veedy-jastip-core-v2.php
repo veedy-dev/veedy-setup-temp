@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Veedy Jastip Core
  * Description: Lightweight WooCommerce extensions for Veedy Store assisted purchase workflow.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: Veedy Store
  * Text Domain: veedy-jastip-core
  */
@@ -75,8 +75,6 @@ final class Veedy_Jastip_Core {
         add_filter('woocommerce_get_price_html', [__CLASS__, 'price_html'], 20, 2);
         add_filter('woocommerce_loop_add_to_cart_link', [__CLASS__, 'loop_cta'], 20, 3);
         add_filter('woocommerce_checkout_fields', [__CLASS__, 'checkout_fields']);
-        add_action('woocommerce_review_order_before_submit', [__CLASS__, 'checkout_agreement']);
-        add_action('woocommerce_after_checkout_validation', [__CLASS__, 'validate_checkout'], 10, 2);
         add_action('woocommerce_checkout_create_order', [__CLASS__, 'save_checkout_order_meta'], 20, 2);
         add_action('woocommerce_admin_order_data_after_billing_address', [__CLASS__, 'admin_order_contact_meta']);
         add_action('add_meta_boxes', [__CLASS__, 'order_metabox']);
@@ -84,6 +82,7 @@ final class Veedy_Jastip_Core {
         add_action('woocommerce_before_account_orders', [__CLASS__, 'account_tracking_hint']);
         add_shortcode('veedy_order_tracking', [__CLASS__, 'tracking_shortcode']);
         add_filter('woocommerce_gateway_title', [__CLASS__, 'gateway_title'], 10, 2);
+        add_filter('woocommerce_gateway_description', [__CLASS__, 'gateway_description'], 10, 2);
     }
 
     public static function register_statuses(): void {
@@ -473,24 +472,11 @@ final class Veedy_Jastip_Core {
         return $fields;
     }
 
-    public static function checkout_agreement(): void {
-        echo '<p class="form-row veedy-checkout-agreement"><label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox"><input type="checkbox" class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" name="veedy_jastip_agreement" value="1" /> <span>Saya paham bahwa pesanan ini adalah jasa titip / assisted purchase. Pesanan akan dibeli ke supplier setelah pembayaran diverifikasi. Estimasi pengiriman dapat berubah karena supplier, forwarder, bea cukai, atau kurir lokal.</span> <abbr class="required" title="required">*</abbr></label></p>';
-    }
-
-    public static function validate_checkout($data, WP_Error $errors): void {
-        if (empty($_POST['veedy_jastip_agreement'])) {
-            $errors->add('veedy_jastip_agreement', 'Kamu perlu menyetujui ketentuan jasa titip sebelum membuat pesanan.');
-        }
-    }
-
     public static function save_checkout_order_meta(WC_Order $order, array $data): void {
         foreach (['billing_discord', 'billing_kecamatan', 'billing_kelurahan'] as $field) {
             if (isset($_POST[$field])) {
                 $order->update_meta_data('_' . $field, sanitize_text_field(wp_unslash($_POST[$field])));
             }
-        }
-        if (!empty($_POST['veedy_jastip_agreement'])) {
-            $order->update_meta_data('_veedy_jastip_agreement', 'yes');
         }
     }
 
@@ -685,6 +671,16 @@ final class Veedy_Jastip_Core {
 
     public static function gateway_title(string $title, string $id): string {
         return $id === 'bacs' ? 'Transfer Bank Manual' : $title;
+    }
+
+    public static function gateway_description(string $description, string $id): string {
+        if ($id !== 'bacs' || is_admin()) {
+            return $description;
+        }
+        if (function_exists('is_order_received_page') && is_order_received_page()) {
+            return $description;
+        }
+        return 'Transfer manual sesuai invoice. Detail rekening akan ditampilkan setelah pesanan dibuat.';
     }
 }
 
